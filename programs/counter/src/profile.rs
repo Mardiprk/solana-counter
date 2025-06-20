@@ -3,17 +3,28 @@ use std::mem::size_of;
 
 declare_id!("BTHp3sf89ZWMGiMTSaZSWf8UC2a1oGwKtF2ZVhQgwa6q");
 
-const PROFILE_SEED: &[u8] = b"profile";
-const PROFILE_SPACE: usize = 8 + size_of::<UserProfile>();
+const PROFILE_SEED: &[u8] = b"profile"; 
+const MAX_NAME_LEN: usize = 32; // max name length  
+const PROFILE_SPACE: usize = 8 + 32 + 4 + MAX_NAME_LEN + 1 + 8;
 
 #[program]
 pub mod basic_account{
     use super::*;
 
     pub fn create_profile(ctx: Context<CreateProfile>, name: String, age: u8) -> Result<()>{
+        //checking name length so it doesn't  exceeds the limit
+        require!(
+            name.len() <= MAX_NAME_LEN,
+            ProfileError::NameTooLong,
+        );
+        //checking age bounds
+        require!(
+            age >= 18 && age <= 100 ,
+            ProfileError::InvalidAge,
+        );
         let profile = &mut ctx.accounts.profile;
+
         profile.owner = ctx.accounts.user.key();
-        
         profile.name = name;
         profile.age = age;
         profile.created_at = Clock::get()?.unix_timestamp;
@@ -28,7 +39,16 @@ pub mod basic_account{
             profile.owner == ctx.accounts.user.key(),
             ProfileError::Unauthorized,
         );
-
+        //Again Checking name length
+        require!(
+            name.len() <= MAX_NAME_LEN,
+            ProfileError::NameTooLong,
+        );
+        //Again checking age bounds
+        require!(
+            age >= 18 && age <= 100 ,
+            ProfileError::InvalidAge,
+        );
         profile.name = name;
         profile.age = age;
 
@@ -45,6 +65,7 @@ pub mod basic_account{
             profile.owner,
             profile.created_at
         );
+
         Ok(())
     }
 }
@@ -96,4 +117,10 @@ pub struct UserProfile {
 pub enum ProfileError {
     #[msg("You're not authorized to perform this action")]
     Unauthorized,
+    #[msg("Name is too long")]
+    NameTooLong,
+    #[msg("Please Select an Appropriate Age")]
+    InvalidAge,
+    #[msg("Profile Already Exists")]
+    ProfileAlreadyExists,
 }

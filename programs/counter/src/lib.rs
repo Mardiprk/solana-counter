@@ -29,6 +29,19 @@ pub mod counter {
         Ok(())
     }
 
+    pub fn decrement(ctxL Context<Increment>) -> Result<()>{
+        let counter = &mut ctx.accounts.counter;
+        require!(
+            counter.authority == ctx.accounts.user.key(),
+            ErrorCodes::Unauthorized
+        );
+        counter.count = counter
+                    .count
+                    .checked_sub(1)
+                    .ok_or(ErrorCodes::ArithmeticOverflow)?;
+        Ok(())
+    }
+
     pub fn delegate(ctx: Context<DelegateInput>) -> Result<()> {
         let counter = &mut ctx.accounts.counter;
         require!(

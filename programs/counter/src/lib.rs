@@ -22,9 +22,9 @@ pub mod counter {
             ErrorCodes::Unauthorized
         );
         counter.count = counter
-            .count
-            .checked_add(1)
-            .ok_or(ErrorCodes::Unauthorized)?;
+                    .count
+                    .checked_add(1)
+                    .ok_or(ErrorCodes::ArithmeticOverflow)?;
 
         Ok(())
     }
@@ -93,4 +93,6 @@ pub struct Counter {
 enum ErrorCodes {
     #[msg("Unauthorized")]
     Unauthorized,
+    #[msg("Arithmetic overflow")]
+    ArithmeticOverflow,
 }

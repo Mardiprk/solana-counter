@@ -2,7 +2,7 @@ use anchor_lang::prelude::*;
 
 declare_id!("BTHp3sf89ZWMGiMTSaZSWf8UC2a1oGwKtF2ZVhQgwa6q");
 
-const SEED_COUNT: &[u8] = b"counter";
+const SEEDS_AMOUNT: &[u8] = b"counter";
 
 #[program]
 pub mod counter {
@@ -19,36 +19,37 @@ pub mod counter {
         let counter = &mut ctx.accounts.counter;
         require!(
             counter.authority == ctx.accounts.user.key(),
-            ErrorCodes::Unauthorized
+            HandleError::Unauthorized,
         );
         counter.count = counter
-                    .count
-                    .checked_add(1)
-                    .ok_or(ErrorCodes::ArithmeticOverflow)?;
-
+            .count
+            .checked_add(1)
+            .ok_or(HandleError::ArithmeticOverflow)?; // Added ?
         Ok(())
     }
 
-    pub fn decrement(ctxL Context<Increment>) -> Result<()>{
+    pub fn decrement(ctx: Context<Decrement>) -> Result<()> {
+        // Fixed context type
         let counter = &mut ctx.accounts.counter;
         require!(
             counter.authority == ctx.accounts.user.key(),
-            ErrorCodes::Unauthorized
+            HandleError::Unauthorized,
         );
         counter.count = counter
-                    .count
-                    .checked_sub(1)
-                    .ok_or(ErrorCodes::ArithmeticOverflow)?;
+            .count
+            .checked_sub(1)
+            .ok_or(HandleError::ArithmeticOverflow)?; // Added ?
         Ok(())
     }
 
-    pub fn delegate(ctx: Context<DelegateInput>) -> Result<()> {
+    pub fn delegate(ctx: Context<Delegate>) -> Result<()> {
+        // Fixed context type
         let counter = &mut ctx.accounts.counter;
         require!(
             counter.authority == ctx.accounts.user.key(),
-            ErrorCodes::Unauthorized
+            HandleError::Unauthorized,
         );
-        msg!("Delegation Complete");
+        msg!("Delegation Done (mock)");
         Ok(())
     }
 }
@@ -58,7 +59,7 @@ pub struct Initialize<'info> {
     #[account(
         init,
         payer = user,
-        seeds = [SEED_COUNT, user.key().as_ref()],
+        seeds = [SEEDS_AMOUNT, user.key().as_ref()],
         bump,
         space = 8 + 8 + 32,
     )]
@@ -74,7 +75,21 @@ pub struct Initialize<'info> {
 pub struct Increment<'info> {
     #[account(
         mut,
-        seeds = [SEED_COUNT, user.key().as_ref()],
+        seeds = [SEEDS_AMOUNT, user.key().as_ref()],
+        bump,
+    )]
+    pub counter: Account<'info, Counter>,
+
+    #[account(mut)]
+    pub user: Signer<'info>,
+}
+
+// Added missing context structs
+#[derive(Accounts)]
+pub struct Decrement<'info> {
+    #[account(
+        mut,
+        seeds = [SEEDS_AMOUNT, user.key().as_ref()],
         bump,
     )]
     pub counter: Account<'info, Counter>,
@@ -84,10 +99,10 @@ pub struct Increment<'info> {
 }
 
 #[derive(Accounts)]
-pub struct DelegateInput<'info> {
+pub struct Delegate<'info> {
     #[account(
         mut,
-        seeds = [SEED_COUNT, user.key().as_ref()],
+        seeds = [SEEDS_AMOUNT, user.key().as_ref()],
         bump,
     )]
     pub counter: Account<'info, Counter>,
@@ -98,14 +113,14 @@ pub struct DelegateInput<'info> {
 
 #[account]
 pub struct Counter {
-    count: u64,
-    authority: Pubkey,
+    pub count: u8,
+    pub authority: Pubkey,
 }
 
 #[error_code]
-enum ErrorCodes {
-    #[msg("Unauthorized")]
+enum HandleError {
+    #[msg("Unauthorized!")]
     Unauthorized,
-    #[msg("Arithmetic overflow")]
+    #[msg("Arithmetic Overflow")] // Fixed typo
     ArithmeticOverflow,
 }

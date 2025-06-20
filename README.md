@@ -63,8 +63,7 @@ yarn test
 - `migrations/` - Deployment scripts
 
 ## Requirements
-- [Solana CLI](https://docs.solana.com/cli/install-solana-cli-tools)
-- [Anchor CLI](https://project-serum.github.io/anchor/getting-started/installation.html)
+- [Anchor/Solana Playground CLI](https://beta.solpg.io/)
 - Node.js & Yarn
 
 ## License

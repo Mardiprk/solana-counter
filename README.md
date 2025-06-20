@@ -1,9 +1,11 @@
-![Counter Program Logo](https://camo.githubusercontent.com/590ccfb4e70a27673047ee879ed409981c05b2da403e60b4aaa7961ccdb46001/68747470733a2f2f7062732e7477696d672e636f6d2f6d656469612f46565556614f3958454141756c764b3f666f726d61743d706e67266e616d653d736d616c6c)
+<div align="center">
+  <img src="https://camo.githubusercontent.com/590ccfb4e70a27673047ee879ed409981c05b2da403e60b4aaa7961ccdb46001/68747470733a2f2f7062732e7477696d672e636f6d2f6d656469612f46565556614f3958454141756c764b3f666f726d61743d706e67266e616d653d736d616c6c" alt="Counter Program Logo" width="180" />
+</div>
 
 # 🧮 Counter Program (Solana Anchor)
 
 Welcome to the **Counter Program**! This is a simple, elegant on-chain counter built with [Anchor](https://project-serum.github.io/anchor/) for the Solana blockchain. It demonstrates basic account management, authority checks, and state updates—all in a beginner-friendly way.
-
+  
 ---
 
 ## ✨ Features
@@ -84,8 +86,3 @@ yarn test
 ## 📦 Requirements
 - [Anchor/Solana Playground CLI](https://beta.solpg.io/)
 - Node.js & Yarn
-
----
-
-## 📄 License
-MIT 

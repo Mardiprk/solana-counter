@@ -123,4 +123,6 @@ pub enum ProfileError {
     InvalidAge,
     #[msg("Profile Already Exists")]
     ProfileAlreadyExists,
+    #[msg("Profile Too")]
+    ProfileToo,
 }
